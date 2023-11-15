@@ -27,8 +27,8 @@ export class ProdottiController {
   constructor(private readonly prodottiService: ProdottiService) {}
 
   @Post()
-  async create(@Body() contocorrente: ProdottiEntity): Promise<ProdottiEntity> {
-    return await this.prodottiService.crea(contocorrente);
+  async create(@Body() prodotto: ProdottiEntity): Promise<ProdottiEntity> {
+    return await this.prodottiService.crea(prodotto);
   }
 
   @Get()

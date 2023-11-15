@@ -12,33 +12,56 @@ export class ClientiService {
     private clientiRepository: Repository<ClientiEntity>,
   ) {}
 
-  async crea(contocorrenteDto: CreateClientiDto): Promise<ClientiEntity> {
+  async aggiorna(
+    iban: string,
+    aggiornaCliente: UpdateClientiDto,
+  ): Promise<boolean> {
     try {
-      const nuovoCliente = this.clientiRepository.create(contocorrenteDto);
+      await this.clientiRepository.update(iban, aggiornaCliente);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async crea(clienteDto: CreateClientiDto): Promise<ClientiEntity> {
+    try {
+      const nuovoCliente = this.clientiRepository.create(clienteDto);
       await this.clientiRepository.save(nuovoCliente);
-
-      // this.communicationClient.emit(
-      //   'nuovo_cliente',
-      //   new NuovoClienteEvent(nuovoContocorrente.Iban),
-      // );
-
       return nuovoCliente;
     } catch (error) {}
   }
 
-  findAll() {
-    return `This action returns all clienti`;
+  async cancella(CodiceCliente: string): Promise<boolean> {
+    try {
+      const clienteDaEliminare = await this.clientiRepository.findOneBy({
+        CodiceCliente: CodiceCliente,
+      });
+      if (!clienteDaEliminare) {
+        throw new Error(`Cliente non trovato`);
+      }
+      await this.clientiRepository.remove(clienteDaEliminare);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} clienti`;
+  async trovaTutti(): Promise<ClientiEntity[]> {
+    return await this.clientiRepository.find();
   }
 
-  update(id: number, updateClientiDto: UpdateClientiDto) {
-    return `This action updates a #${id} clienti`;
-  }
+  async trovaUno(CodiceCliente: string): Promise<ClientiEntity> {
+    try {
+      const cliente = await this.clientiRepository.findOneBy({
+        CodiceCliente: CodiceCliente,
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} clienti`;
+      if (!cliente) {
+        throw new Error(`cliente non trovato.`);
+      }
+
+      return cliente;
+    } catch (errore) {}
   }
 }
