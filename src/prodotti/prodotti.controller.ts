@@ -11,7 +11,7 @@ import {
   NotFoundException,
   UseInterceptors,
 } from '@nestjs/common';
-import { ProdottiService } from './prodotti.service';
+import { ProdottiService } from './ProdottiService';
 import { CreateProdottiDto } from './dto/create-prodotti.dto';
 import { UpdateProdottiDto } from './dto/update-prodotti.dto';
 // import { CustomValidationPipe } from 'src/pipes/isNumeric.pipe';

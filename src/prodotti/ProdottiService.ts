@@ -1,16 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProdottiDto } from './dto/create-prodotti.dto';
 import { UpdateProdottiDto } from './dto/update-prodotti.dto';
 import { ProdottiEntity } from './entities/prodotti.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JwtService } from '@nestjs/jwt';
+import { ClientProxy } from '@nestjs/microservices';
+import { NuovoOrdineOkEvent } from './eventi/nuovoOrdineOkEvent';
+import { NuovoOrdineNotOkEvent } from './eventi/nuovoOrdineNotOkEvent';
 
 @Injectable()
 export class ProdottiService {
   constructor(
     @InjectRepository(ProdottiEntity)
     private prodottiRepository: Repository<ProdottiEntity>,
+    @Inject('EVENT_COMMUNICATION')
+    private readonly communicationClient: ClientProxy,
   ) {
     // private readonly jwtService: JwtService,
   }
@@ -35,7 +39,6 @@ export class ProdottiService {
       //   'nuovo_cliente',
       //   new NuovoClienteEvent(nuovoContocorrente.Iban),
       // );
-
       return nuovoProdotto;
     } catch (error) {}
   }
@@ -96,6 +99,20 @@ export class ProdottiService {
     const prodotto = await this.prodottiRepository.findOneBy({
       idProdotto: idProdotto,
     });
+
+    if (quantità - (await prodotto.Giacenza) == 0) {
+      this.communicationClient.emit(
+        'ok_ordine',
+        new NuovoOrdineOkEvent(prodotto.QuantitàMinimaOrdine),
+      );
+    }
+
+    if (quantità - (await prodotto.Giacenza) > 0) {
+      this.communicationClient.emit(
+        'not_ordine',
+        new NuovoOrdineNotOkEvent(prodotto.QuantitàMinimaOrdine),
+      );
+    }
 
     if (!prodotto) {
       throw new NotFoundException('Prodotto non trovato');
