@@ -1,15 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ClientiService } from './clienti.service';
 import { CreateClientiDto } from './dto/create-clienti.dto';
 import { UpdateClientiDto } from './dto/update-clienti.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { ClientiEntity } from './entities/clienti.entity';
+import { Public } from 'src/decorators/public.decorator';
 
+@UseGuards(AuthGuard)
 @Controller('clienti')
 export class ClientiController {
   constructor(private readonly clientiService: ClientiService) {}
-
+  @Public()
   @Post()
-  create(@Body() createClientiDto: CreateClientiDto) {
-    return this.clientiService.create(createClientiDto);
+  async create(@Body() cliente: ClientiEntity): Promise<ClientiEntity> {
+    return await this.clientiService.crea(cliente);
   }
 
   @Get()

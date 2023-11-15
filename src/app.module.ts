@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ClientiModule } from './clienti/clienti.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UtentiModule } from './utenti/utenti.module';
+import { ProdottiModule } from './prodotti/prodotti.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       migrations: ['src/migration/*.ts'],
     }),
     ClientiModule,
+    UtentiModule,
+    ProdottiModule,
   ],
   controllers: [],
   providers: [],

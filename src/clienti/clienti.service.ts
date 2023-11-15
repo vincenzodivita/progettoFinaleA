@@ -9,11 +9,21 @@ import { Repository } from 'typeorm';
 export class ClientiService {
   constructor(
     @InjectRepository(ClientiEntity)
-    private contoCorrenteRepository: Repository<ClientiEntity>,
+    private clientiRepository: Repository<ClientiEntity>,
   ) {}
 
-  create(createClientiDto: CreateClientiDto) {
-    return 'This action adds a new clienti';
+  async crea(contocorrenteDto: CreateClientiDto): Promise<ClientiEntity> {
+    try {
+      const nuovoCliente = this.clientiRepository.create(contocorrenteDto);
+      await this.clientiRepository.save(nuovoCliente);
+
+      // this.communicationClient.emit(
+      //   'nuovo_cliente',
+      //   new NuovoClienteEvent(nuovoContocorrente.Iban),
+      // );
+
+      return nuovoCliente;
+    } catch (error) {}
   }
 
   findAll() {
