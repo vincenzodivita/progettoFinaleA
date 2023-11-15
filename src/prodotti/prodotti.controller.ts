@@ -28,23 +28,35 @@ export class ProdottiController {
 
   @Post()
   async create(@Body() prodotto: ProdottiEntity): Promise<ProdottiEntity> {
-    return await this.prodottiService.crea(prodotto);
+    try {
+      return await this.prodottiService.crea(prodotto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get()
   async findAll() {
-    const success = await this.prodottiService.trovaTutti();
-    if (success.length > 0) {
-      return success;
-    } else throw new NotFoundException('Nessun prodotto trovato');
+    try {
+      const success = await this.prodottiService.trovaTutti();
+      if (success.length > 0) {
+        return success;
+      } else throw new NotFoundException('Nessun prodotto trovato');
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get(':idProdotto')
   async findOne(@Param('idProdotto') idProdotto: number) {
-    const success = await this.prodottiService.trovaUno(idProdotto);
-    if (success) {
-      return success;
-    } else throw new NotFoundException('Nessun prodotto trovato');
+    try {
+      const success = await this.prodottiService.trovaUno(idProdotto);
+      if (success) {
+        return success;
+      } else throw new NotFoundException('Nessun prodotto trovato');
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Patch(':idProdotto')
@@ -52,19 +64,27 @@ export class ProdottiController {
     @Param('idProdotto') idProdotto: string,
     @Body() updateProdottiDto: UpdateProdottiDto,
   ) {
-    const success: boolean = await this.prodottiService.aggiorna(
-      idProdotto,
-      updateProdottiDto,
-    );
-    if (success) return 'Aggiornamento effettuato';
-    else throw new NotFoundException('Il prodotto non esiste');
+    try {
+      const success: boolean = await this.prodottiService.aggiorna(
+        idProdotto,
+        updateProdottiDto,
+      );
+      if (success) return 'Aggiornamento effettuato';
+      else throw new NotFoundException('Il prodotto non esiste');
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Delete(':id')
   async delete(@Param('idProdotto') idProdotto: number) {
-    const success: boolean = await this.prodottiService.cancella(idProdotto);
-    if (success) return 'Cancellazione effettuata';
-    else throw new NotFoundException('Il prodotto non esiste');
+    try {
+      const success: boolean = await this.prodottiService.cancella(idProdotto);
+      if (success) return 'Cancellazione effettuata';
+      else throw new NotFoundException('Il prodotto non esiste');
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Patch(':id/ordina/:quantity')
@@ -83,9 +103,3 @@ export class ProdottiController {
     return this.prodottiService.decrementaGiacenza(productId, quantity);
   }
 }
-
-// function UseInterceptor(
-//   LoggerIncerceptor: any,
-// ): (target: typeof ProdottiController) => void | typeof ProdottiController {
-//   throw new Error('Function not implemented.');
-// }
